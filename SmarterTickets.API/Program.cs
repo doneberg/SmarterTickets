@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using SmarterTickets.API.Data;
+using SmarterTickets.API.Services;
+using SmarterTickets.Core.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// Register the database context with SQLite
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register services for dependency injection
+// When a controller asks for ITicketService, it gets TicketService
+builder.Services.AddScoped<ITicketService, TicketService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 // Allow Blazor and React to call the API without CORS errors
 builder.Services.AddCors(options =>
 {

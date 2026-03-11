@@ -151,3 +151,4 @@
 /Users/donde/RiderProjects/SmarterTickets/SmarterTickets.API/obj/Debug/net10.0/SmarterTickets.API.pdb
 /Users/donde/RiderProjects/SmarterTickets/SmarterTickets.API/obj/Debug/net10.0/SmarterTickets.API.genruntimeconfig.cache
 /Users/donde/RiderProjects/SmarterTickets/SmarterTickets.API/obj/Debug/net10.0/ref/SmarterTickets.API.dll
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.API/bin/Debug/net10.0/BCrypt.Net-Next.dll
