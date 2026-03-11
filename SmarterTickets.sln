@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmarterTickets.Web", "SmarterTickets.Web\SmarterTickets.Web.csproj", "{5A5BD87C-A2F8-42E5-9A3B-FBD8679F4E00}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmarterTickets.API", "SmarterTickets.API\SmarterTickets.API.csproj", "{49711C5B-6035-40FE-80F6-090D7534A218}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SmarterTickets.Core", "SmarterTickets.Core\SmarterTickets.Core.csproj", "{A2E4F678-A9FB-48D5-A7A7-FA37B04C98D8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5A5BD87C-A2F8-42E5-9A3B-FBD8679F4E00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A5BD87C-A2F8-42E5-9A3B-FBD8679F4E00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A5BD87C-A2F8-42E5-9A3B-FBD8679F4E00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A5BD87C-A2F8-42E5-9A3B-FBD8679F4E00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49711C5B-6035-40FE-80F6-090D7534A218}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49711C5B-6035-40FE-80F6-090D7534A218}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49711C5B-6035-40FE-80F6-090D7534A218}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49711C5B-6035-40FE-80F6-090D7534A218}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2E4F678-A9FB-48D5-A7A7-FA37B04C98D8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2E4F678-A9FB-48D5-A7A7-FA37B04C98D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2E4F678-A9FB-48D5-A7A7-FA37B04C98D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2E4F678-A9FB-48D5-A7A7-FA37B04C98D8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
