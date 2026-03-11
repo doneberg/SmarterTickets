@@ -66,7 +66,8 @@ public class TicketService : ITicketService
             Title = createTicketDto.Title,
             Description = createTicketDto.Description,
             Priority = createTicketDto.Priority,
-            UserId = createTicketDto.UserId
+            UserId = createTicketDto.UserId,
+            CreatedAt = DateTime.UtcNow
         };
 
         _context.Tickets.Add(ticket);
