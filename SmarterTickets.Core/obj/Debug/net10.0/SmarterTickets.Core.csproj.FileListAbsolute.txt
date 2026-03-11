@@ -1,0 +1,11 @@
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/bin/Debug/net10.0/SmarterTickets.Core.deps.json
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/bin/Debug/net10.0/SmarterTickets.Core.dll
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/bin/Debug/net10.0/SmarterTickets.Core.pdb
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/obj/Debug/net10.0/SmarterTickets.Core.GeneratedMSBuildEditorConfig.editorconfig
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/obj/Debug/net10.0/SmarterTickets.Core.AssemblyInfoInputs.cache
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/obj/Debug/net10.0/SmarterTickets.Core.AssemblyInfo.cs
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/obj/Debug/net10.0/SmarterTickets.Core.csproj.CoreCompileInputs.cache
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/obj/Debug/net10.0/SmarterTickets.Core.dll
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/obj/Debug/net10.0/refint/SmarterTickets.Core.dll
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/obj/Debug/net10.0/SmarterTickets.Core.pdb
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Core/obj/Debug/net10.0/ref/SmarterTickets.Core.dll
