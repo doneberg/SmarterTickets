@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("SmarterTickets.Core")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1643b1c3fb277c3abb33b19064e5e47382e2707d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+535af0ec0a897d30435c4c316ffecea8f1bac941")]
 [assembly: System.Reflection.AssemblyProductAttribute("SmarterTickets.Core")]
 [assembly: System.Reflection.AssemblyTitleAttribute("SmarterTickets.Core")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
