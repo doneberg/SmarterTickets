@@ -11,11 +11,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Register the database context with SQLite
-// This tells the API where to find the database file
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-// Register the database context with SQLite
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -47,5 +42,43 @@ app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 app.UseAuthorization();
 app.MapControllers();
+
+// First: recreate all tables from migrations
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.Migrate();
+}
+
+// Second: seed demo users if none exist
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    
+    if (!context.Users.Any())
+    {
+        context.Users.AddRange(
+            new SmarterTickets.Core.Models.User
+            {
+                FirstName = "Demo",
+                LastName = "User",
+                Email = "user@demo.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("demo123"),
+                Role = SmarterTickets.Core.Enums.UserRole.User,
+                CreatedAt = DateTime.UtcNow
+            },
+            new SmarterTickets.Core.Models.User
+            {
+                FirstName = "Demo",
+                LastName = "Admin",
+                Email = "admin@demo.com",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("demo123"),
+                Role = SmarterTickets.Core.Enums.UserRole.Admin,
+                CreatedAt = DateTime.UtcNow
+            }
+        );
+        context.SaveChanges();
+    }
+}
 
 app.Run();

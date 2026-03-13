@@ -8,18 +8,18 @@ namespace SmarterTickets.API.Services;
 
 public class UserService(AppDbContext context) : IUserService
 {
-
     public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
     {
-        return await context.Users
-            .Select(u => new UserDto
-            {
-                Id = u.Id,
-                FirstName = u.FirstName,
-                LastName = u.LastName,
-                Email = u.Email
-            })
-            .ToListAsync();
+        var users = await context.Users.ToListAsync();
+        
+        return users.Select(u => new UserDto
+        {
+            Id = u.Id,
+            FirstName = u.FirstName,
+            LastName = u.LastName,
+            Email = u.Email,
+            Role = u.Role
+        });
     }
 
     public async Task<UserDto?> GetUserByIdAsync(int id)
@@ -32,31 +32,33 @@ public class UserService(AppDbContext context) : IUserService
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Email = user.Email
+            Email = user.Email,
+            Role = user.Role
         };
     }
 
     public async Task<UserDto> CreateUserAsync(CreateUserDto createUserDto)
     {
-        // In a real app we would use a proper password hashing library
-        // For now we store a simple hash to demonstrate the concept
         var user = new User
         {
             FirstName = createUserDto.FirstName,
             LastName = createUserDto.LastName,
             Email = createUserDto.Email,
-            PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password)
+            PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password),
+            Role = createUserDto.Role
         };
 
         context.Users.Add(user);
         await context.SaveChangesAsync();
+        await context.Entry(user).ReloadAsync();
 
         return new UserDto
         {
             Id = user.Id,
             FirstName = user.FirstName,
             LastName = user.LastName,
-            Email = user.Email
+            Email = user.Email,
+            Role = user.Role
         };
     }
 
