@@ -1,0 +1,137 @@
+@page "/tickets/{Id:int}"
+@inject HttpClient Http
+@rendermode InteractiveServer
+@using SmarterTickets.Core.DTOs
+@using SmarterTickets.Core.Enums
+
+<PageTitle>Ticket #@Id</PageTitle>
+
+@if (_ticket == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="container">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between">
+                <h3>@_ticket.Title</h3>
+                <a href="/tickets" class="btn btn-secondary">Back to Tickets</a>
+            </div>
+            <div class="card-body">
+                <p>@_ticket.Description</p>
+                <div class="row">
+                    <div class="col-md-3">
+                        <strong>Status:</strong>
+                        <span class="badge @GetStatusBadge(_ticket.Status)">@_ticket.Status</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Priority:</strong>
+                        <span class="badge @GetPriorityBadge(_ticket.Priority)">@_ticket.Priority</span>
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Created By:</strong> @_ticket.CreatedByName
+                    </div>
+                    <div class="col-md-3">
+                        <strong>Created At:</strong> @_ticket.CreatedAt.ToLocalTime().ToString("MM/dd/yyyy")
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4>Comments</h4>
+        @if (_comments == null)
+        {
+            <p>Loading comments...</p>
+        }
+        else if (!_comments.Any())
+        {
+            <p>No comments yet.</p>
+        }
+        else
+        {
+            @foreach (var comment in _comments)
+            {
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <p>@comment.Content</p>
+                        <small class="text-muted">
+                            @comment.CreatedByName — @comment.CreatedAt.ToLocalTime().ToString("MM/dd/yyyy hh:mm tt")
+                        </small>
+                    </div>
+                </div>
+            }
+        }
+
+        <div class="card mt-4">
+            <div class="card-header">Add Comment</div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <textarea class="form-control" @bind="_newComment" rows="3" placeholder="Write a comment..."></textarea>
+                </div>
+                <button class="btn btn-primary" @onclick="AddComment">Submit Comment</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public int Id { get; set; }
+    private TicketDto? _ticket;
+    private List<CommentDto>? _comments;
+    private string _newComment = string.Empty;
+
+    // Hardcoded for now — we'll wire up auth later
+    private readonly int _currentUserId = 1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTicket();
+        await LoadComments();
+    }
+
+    private async Task LoadTicket()
+    {
+        _ticket = await Http.GetFromJsonAsync<TicketDto>($"tickets/{Id}");
+    }
+
+    private async Task LoadComments()
+    {
+        _comments = await Http.GetFromJsonAsync<List<CommentDto>>($"comments/ticket/{Id}");
+    }
+
+    private async Task AddComment()
+    {
+        if (string.IsNullOrWhiteSpace(_newComment)) return;
+
+        var createComment = new CreateCommentDto
+        {
+            Content = _newComment,
+            TicketId = Id,
+            UserId = _currentUserId
+        };
+
+        await Http.PostAsJsonAsync("comments", createComment);
+        _newComment = string.Empty;
+        await LoadComments();
+    }
+
+    private string GetStatusBadge(TicketStatus status) => status switch
+    {
+        TicketStatus.Open => "bg-primary",
+        TicketStatus.InProgress => "bg-warning",
+        TicketStatus.Pending => "bg-info",
+        TicketStatus.Resolved => "bg-success",
+        TicketStatus.Closed => "bg-secondary",
+        _ => "bg-secondary"
+    };
+
+    private string GetPriorityBadge(TicketPriority priority) => priority switch
+    {
+        TicketPriority.Low => "bg-success",
+        TicketPriority.Medium => "bg-info",
+        TicketPriority.High => "bg-warning",
+        TicketPriority.Critical => "bg-danger",
+        _ => "bg-secondary"
+    };
+}

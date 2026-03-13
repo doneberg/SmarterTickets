@@ -83,3 +83,7 @@
 /Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/obj/Debug/net10.0/SmarterTickets.Web.pdb
 /Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/obj/Debug/net10.0/SmarterTickets.Web.genruntimeconfig.cache
 /Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/obj/Debug/net10.0/ref/SmarterTickets.Web.dll
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/bin/Debug/net10.0/SmarterTickets.Core.dll
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/bin/Debug/net10.0/SmarterTickets.Core.pdb
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/obj/Debug/net10.0/SmarterTickets.Web.csproj.AssemblyReference.cache
+/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/obj/Debug/net10.0/SmarterT.E9151A3A.Up2Date

@@ -26,6 +26,10 @@ build_property.EnableCodeStyleSeverity =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9BcHAucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
+[/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/Components/Pages/CreateTicket.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9DcmVhdGVUaWNrZXQucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
 [/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/Components/Pages/Error.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9FcnJvci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -36,6 +40,14 @@ build_metadata.AdditionalFiles.CssScope =
 
 [/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/Components/Pages/NotFound.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9Ob3RGb3VuZC5yYXpvcg==
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/Components/Pages/TicketDetail.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9UaWNrZXREZXRhaWwucmF6b3I=
+build_metadata.AdditionalFiles.CssScope = 
+
+[/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/Components/Pages/Tickets.razor]
+build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50cy9QYWdlcy9UaWNrZXRzLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
 [/Users/donde/RiderProjects/SmarterTickets/SmarterTickets.Web/Components/Routes.razor]

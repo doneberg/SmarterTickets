@@ -6,18 +6,11 @@ using SmarterTickets.Core.Models;
 
 namespace SmarterTickets.API.Services;
 
-public class TicketService : ITicketService
+public class TicketService(AppDbContext context) : ITicketService
 {
-    private readonly AppDbContext _context;
-
-    public TicketService(AppDbContext context)
-    {
-        _context = context;
-    }
-
     public async Task<IEnumerable<TicketDto>> GetAllTicketsAsync()
     {
-        var tickets = await _context.Tickets
+        var tickets = await context.Tickets
             .Include(t => t.User)
             .ToListAsync();
 
@@ -38,7 +31,7 @@ public class TicketService : ITicketService
 
     public async Task<TicketDto?> GetTicketByIdAsync(int id)
     {
-        var ticket = await _context.Tickets
+        var ticket = await context.Tickets
             .Include(t => t.User)
             .FirstOrDefaultAsync(t => t.Id == id);
 
@@ -70,15 +63,15 @@ public class TicketService : ITicketService
             CreatedAt = DateTime.UtcNow
         };
 
-        _context.Tickets.Add(ticket);
-        await _context.SaveChangesAsync();
+        context.Tickets.Add(ticket);
+        await context.SaveChangesAsync();
 
         return await GetTicketByIdAsync(ticket.Id) ?? throw new Exception("Failed to create ticket");
     }
 
     public async Task<TicketDto?> UpdateTicketAsync(int id, UpdateTicketDto updateTicketDto)
     {
-        var ticket = await _context.Tickets.FindAsync(id);
+        var ticket = await context.Tickets.FindAsync(id);
         if (ticket == null) return null;
 
         ticket.Title = updateTicketDto.Title;
@@ -87,17 +80,17 @@ public class TicketService : ITicketService
         ticket.Priority = updateTicketDto.Priority;
         ticket.UpdatedAt = DateTime.UtcNow;
 
-        await _context.SaveChangesAsync();
+        await context.SaveChangesAsync();
         return await GetTicketByIdAsync(id);
     }
 
     public async Task<bool> DeleteTicketAsync(int id)
     {
-        var ticket = await _context.Tickets.FindAsync(id);
+        var ticket = await context.Tickets.FindAsync(id);
         if (ticket == null) return false;
 
-        _context.Tickets.Remove(ticket);
-        await _context.SaveChangesAsync();
+        context.Tickets.Remove(ticket);
+        await context.SaveChangesAsync();
         return true;
     }
 }

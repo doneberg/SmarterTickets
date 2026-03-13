@@ -6,18 +6,12 @@ using SmarterTickets.Core.Models;
 
 namespace SmarterTickets.API.Services;
 
-public class UserService : IUserService
+public class UserService(AppDbContext context) : IUserService
 {
-    private readonly AppDbContext _context;
-
-    public UserService(AppDbContext context)
-    {
-        _context = context;
-    }
 
     public async Task<IEnumerable<UserDto>> GetAllUsersAsync()
     {
-        return await _context.Users
+        return await context.Users
             .Select(u => new UserDto
             {
                 Id = u.Id,
@@ -30,7 +24,7 @@ public class UserService : IUserService
 
     public async Task<UserDto?> GetUserByIdAsync(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id);
         if (user == null) return null;
 
         return new UserDto
@@ -54,8 +48,8 @@ public class UserService : IUserService
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(createUserDto.Password)
         };
 
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
+        context.Users.Add(user);
+        await context.SaveChangesAsync();
 
         return new UserDto
         {
@@ -68,11 +62,11 @@ public class UserService : IUserService
 
     public async Task<bool> DeleteUserAsync(int id)
     {
-        var user = await _context.Users.FindAsync(id);
+        var user = await context.Users.FindAsync(id);
         if (user == null) return false;
 
-        _context.Users.Remove(user);
-        await _context.SaveChangesAsync();
+        context.Users.Remove(user);
+        await context.SaveChangesAsync();
         return true;
     }
 }

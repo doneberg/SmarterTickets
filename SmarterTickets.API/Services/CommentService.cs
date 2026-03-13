@@ -6,18 +6,12 @@ using SmarterTickets.Core.Models;
 
 namespace SmarterTickets.API.Services;
 
-public class CommentService : ICommentService
+public class CommentService(AppDbContext context) : ICommentService
 {
-    private readonly AppDbContext _context;
-
-    public CommentService(AppDbContext context)
-    {
-        _context = context;
-    }
 
     public async Task<IEnumerable<CommentDto>> GetCommentsByTicketIdAsync(int ticketId)
     {
-        return await _context.Comments
+        return await context.Comments
             .Include(c => c.User)
             .Where(c => c.TicketId == ticketId)
             .Select(c => new CommentDto
@@ -41,10 +35,10 @@ public class CommentService : ICommentService
             UserId = createCommentDto.UserId
         };
 
-        _context.Comments.Add(comment);
-        await _context.SaveChangesAsync();
+        context.Comments.Add(comment);
+        await context.SaveChangesAsync();
 
-        var created = await _context.Comments
+        var created = await context.Comments
             .Include(c => c.User)
             .FirstOrDefaultAsync(c => c.Id == comment.Id);
 
@@ -61,11 +55,11 @@ public class CommentService : ICommentService
 
     public async Task<bool> DeleteCommentAsync(int id)
     {
-        var comment = await _context.Comments.FindAsync(id);
+        var comment = await context.Comments.FindAsync(id);
         if (comment == null) return false;
 
-        _context.Comments.Remove(comment);
-        await _context.SaveChangesAsync();
+        context.Comments.Remove(comment);
+        await context.SaveChangesAsync();
         return true;
     }
 }

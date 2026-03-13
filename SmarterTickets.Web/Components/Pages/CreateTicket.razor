@@ -1,0 +1,65 @@
+@page "/tickets/create"
+@inject HttpClient Http
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+@using SmarterTickets.Core.DTOs
+@using SmarterTickets.Core.Enums
+
+<PageTitle>New Ticket</PageTitle>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between">
+            <h3>Create New Ticket</h3>
+            <a href="/tickets" class="btn btn-secondary">Back to Tickets</a>
+        </div>
+        <div class="card-body">
+            <EditForm Model="newTicket" OnValidSubmit="HandleSubmit">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <div class="mb-3">
+                    <label class="form-label">Title</label>
+                    <InputText class="form-control" @bind-Value="newTicket.Title" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <InputTextArea class="form-control" @bind-Value="newTicket.Description" rows="4" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Priority</label>
+                    <InputSelect class="form-select" @bind-Value="newTicket.Priority">
+                        @foreach (var priority in Enum.GetValues<TicketPriority>())
+                        {
+                            <option value="@priority">@priority</option>
+                        }
+                    </InputSelect>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Create Ticket</button>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    private CreateTicketDto newTicket = new();
+
+    // Hardcoded for now — we'll wire up auth later
+    private readonly int _currentUserId = 1;
+
+    private async Task HandleSubmit()
+    {
+        newTicket.UserId = _currentUserId;
+        
+        var response = await Http.PostAsJsonAsync("tickets", newTicket);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            // Redirect to tickets list after successful creation
+            Nav.NavigateTo("/tickets");
+        }
+    }
+}

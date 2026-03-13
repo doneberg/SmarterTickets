@@ -1,0 +1,87 @@
+@page "/tickets"
+@inject HttpClient Http
+@rendermode InteractiveServer
+@using SmarterTickets.Core.DTOs
+@using SmarterTickets.Core.Enums
+
+<PageTitle>Tickets</PageTitle>
+
+<h1>Support Tickets</h1>
+
+@if (tickets == null)
+{
+    <p>Loading tickets...</p>
+}
+else if (!tickets.Any())
+{
+    <p>No tickets found. <a href="/tickets/create">Create one!</a></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Created By</th>
+                <th>Created At</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var ticket in tickets)
+            {
+                <tr>
+                    <td>@ticket.Id</td>
+                    <td>@ticket.Title</td>
+                    <td>
+                        <span class="badge @GetStatusBadge(ticket.Status)">
+                            @ticket.Status
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge @GetPriorityBadge(ticket.Priority)">
+                            @ticket.Priority
+                        </span>
+                    </td>
+                    <td>@ticket.CreatedByName</td>
+                    <td>@ticket.CreatedAt.ToLocalTime().ToString("MM/dd/yyyy")</td>
+                    <td>
+                        <a href="/tickets/@ticket.Id" class="btn btn-sm btn-primary">View</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<TicketDto>? tickets;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch all tickets from the API when the page loads
+        tickets = await Http.GetFromJsonAsync<List<TicketDto>>("tickets");
+    }
+
+    private string GetStatusBadge(TicketStatus status) => status switch
+    {
+        TicketStatus.Open => "bg-primary",
+        TicketStatus.InProgress => "bg-warning",
+        TicketStatus.Pending => "bg-info",
+        TicketStatus.Resolved => "bg-success",
+        TicketStatus.Closed => "bg-secondary",
+        _ => "bg-secondary"
+    };
+
+    private string GetPriorityBadge(TicketPriority priority) => priority switch
+    {
+        TicketPriority.Low => "bg-success",
+        TicketPriority.Medium => "bg-info",
+        TicketPriority.High => "bg-warning",
+        TicketPriority.Critical => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
