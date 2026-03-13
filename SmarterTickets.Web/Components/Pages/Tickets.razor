@@ -1,69 +1,172 @@
 @page "/tickets"
 @inject HttpClient Http
+@inject SessionService Session
+@inject NavigationManager Nav
 @rendermode InteractiveServer
 @using SmarterTickets.Core.DTOs
 @using SmarterTickets.Core.Enums
+@using SmarterTickets.Services
 
 <PageTitle>Tickets</PageTitle>
 
-<h1>Support Tickets</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Support Tickets</h1>
+        <a href="/tickets/create" class="btn btn-primary">+ New Ticket</a>
+    </div>
 
-@if (tickets == null)
-{
-    <p>Loading tickets...</p>
-}
-else if (!tickets.Any())
-{
-    <p>No tickets found. <a href="/tickets/create">Create one!</a></p>
-}
-else
-{
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Title</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Created By</th>
-                <th>Created At</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var ticket in tickets)
-            {
-                <tr>
-                    <td>@ticket.Id</td>
-                    <td>@ticket.Title</td>
-                    <td>
-                        <span class="badge @GetStatusBadge(ticket.Status)">
-                            @ticket.Status
-                        </span>
-                    </td>
-                    <td>
-                        <span class="badge @GetPriorityBadge(ticket.Priority)">
-                            @ticket.Priority
-                        </span>
-                    </td>
-                    <td>@ticket.CreatedByName</td>
-                    <td>@ticket.CreatedAt.ToLocalTime().ToString("MM/dd/yyyy")</td>
-                    <td>
-                        <a href="/tickets/@ticket.Id" class="btn btn-sm btn-primary">View</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+    @if (_tickets == null)
+    {
+        <p>Loading tickets...</p>
+    }
+    else
+    {
+        <!-- Filters -->
+        <div class="card mb-4 shadow-sm">
+            <div class="card-body">
+                <div class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Search</label>
+                        <input type="text" class="form-control" placeholder="Search by title..."
+                               @bind="_searchTerm" @bind:event="oninput" />
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Status</label>
+                        <select class="form-select" @bind="_statusFilter">
+                            <option value="">All Statuses</option>
+                            @foreach (var status in Enum.GetValues<TicketStatus>())
+                            {
+                                <option value="@status">@status</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label fw-bold">Priority</label>
+                        <select class="form-select" @bind="_priorityFilter">
+                            <option value="">All Priorities</option>
+                            @foreach (var priority in Enum.GetValues<TicketPriority>())
+                            {
+                                <option value="@priority">@priority</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <button class="btn btn-outline-secondary w-100" @onclick="ClearFilters">
+                            Clear Filters
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Count -->
+        <p class="text-muted small mb-2">
+            Showing @FilteredTickets.Count() of @_tickets.Count tickets
+        </p>
+
+        @if (!FilteredTickets.Any())
+        {
+            <div class="alert alert-info">
+                No tickets match your filters.
+            </div>
+        }
+        else
+        {
+            <div class="card shadow-sm">
+                <div class="card-body p-0">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Title</th>
+                                <th>Status</th>
+                                <th>Priority</th>
+                                <th>Created By</th>
+                                <th>Created At</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ticket in FilteredTickets)
+                            {
+                                <tr>
+                                    <td>@ticket.Id</td>
+                                    <td>@ticket.Title</td>
+                                    <td>
+                                        <span class="badge @GetStatusBadge(ticket.Status)">
+                                            @ticket.Status
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="badge @GetPriorityBadge(ticket.Priority)">
+                                            @ticket.Priority
+                                        </span>
+                                    </td>
+                                    <td>@ticket.CreatedByName</td>
+                                    <td>@ticket.CreatedAt.ToLocalTime().ToString("MM/dd/yyyy")</td>
+                                    <td>
+                                        <a href="/tickets/@ticket.Id" class="btn btn-sm btn-primary">
+                                            View
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    }
+</div>
 
 @code {
-    private List<TicketDto>? tickets;
+    private List<TicketDto>? _tickets;
+    private string _searchTerm = string.Empty;
+    private string _statusFilter = string.Empty;
+    private string _priorityFilter = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch all tickets from the API when the page loads
-        tickets = await Http.GetFromJsonAsync<List<TicketDto>>("tickets");
+        if (!Session.IsLoggedIn)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+        _tickets = await Http.GetFromJsonAsync<List<TicketDto>>("tickets");
+    }
+
+    private IEnumerable<TicketDto> FilteredTickets
+    {
+        get
+        {
+            var filtered = _tickets ?? new List<TicketDto>();
+
+            // Apply search filter
+            if (!string.IsNullOrWhiteSpace(_searchTerm))
+                filtered = filtered.Where(t =>
+                    t.Title.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                    t.Description.Contains(_searchTerm, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+            // Apply status filter
+            if (!string.IsNullOrWhiteSpace(_statusFilter) &&
+                Enum.TryParse<TicketStatus>(_statusFilter, out var status))
+                filtered = filtered.Where(t => t.Status == status).ToList();
+
+            // Apply priority filter
+            if (!string.IsNullOrWhiteSpace(_priorityFilter) &&
+                Enum.TryParse<TicketPriority>(_priorityFilter, out var priority))
+                filtered = filtered.Where(t => t.Priority == priority).ToList();
+
+            return filtered;
+        }
+    }
+
+    private void ClearFilters()
+    {
+        _searchTerm = string.Empty;
+        _statusFilter = string.Empty;
+        _priorityFilter = string.Empty;
     }
 
     private string GetStatusBadge(TicketStatus status) => status switch

@@ -1,19 +1,72 @@
-﻿<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+﻿@inject SessionService Session
+@inject NavigationManager Nav
+@using SmarterTickets.Services
+@implements IDisposable
+@rendermode InteractiveServer
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
                 <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tickets">
-                <span class="bi bi-ticket-fill-nav-menu" aria-hidden="true"></span> Tickets
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="tickets/create">
-                <span class="bi bi-plus-circle-fill-nav-menu" aria-hidden="true"></span> New Ticket
-            </NavLink>
-        </div>
+
+        @if (Session.IsLoggedIn)
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="tickets">
+                    <span class="bi bi-ticket-fill-nav-menu" aria-hidden="true"></span> Tickets
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="tickets/create">
+                    <span class="bi bi-plus-circle-fill-nav-menu" aria-hidden="true"></span> New Ticket
+                </NavLink>
+            </div>
+
+            @if (Session.IsAdmin)
+            {
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="admin">
+                        <span class="bi bi-shield-fill-nav-menu" aria-hidden="true"></span> Admin
+                    </NavLink>
+                </div>
+            }
+
+            <div class="nav-item px-3 mt-3">
+                <button class="btn btn-outline-light btn-sm w-100" @onclick="Logout">
+                    Logout (@Session.CurrentUser?.FirstName)
+                </button>
+            </div>
+        }
+        else
+        {
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="login">
+                    <span class="bi bi-box-arrow-in-right-nav-menu" aria-hidden="true"></span> Login
+                </NavLink>
+            </div>
+        }
     </nav>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Subscribe to session changes so nav updates when login state changes
+        Session.OnChange += StateHasChanged;
+    }
+
+    private void Logout()
+    {
+        Session.Logout();
+        Nav.NavigateTo("/login");
+    }
+
+    public void Dispose()
+    {
+        // Unsubscribe to prevent memory leaks
+        Session.OnChange -= StateHasChanged;
+    }
+}

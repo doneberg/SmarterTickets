@@ -1,15 +1,19 @@
 using SmarterTickets.Components;
+using SmarterTickets.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// Register HttpClient so Blazor components can call our API
+// HttpClient stays Scoped — correct for Blazor
 builder.Services.AddScoped(sp => new HttpClient 
 { 
     BaseAddress = new Uri("http://localhost:5232/api/") 
 });
+
+// Changed to Singleton so session persists across page navigation
+builder.Services.AddSingleton<SessionService>();
 
 var app = builder.Build();
 

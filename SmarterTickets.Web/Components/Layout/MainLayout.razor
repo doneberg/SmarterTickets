@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@using SmarterTickets.Services
+@using SmarterTickets.Core.Enums
+@implements IDisposable
 
 <div class="page">
     <div class="sidebar">
@@ -6,8 +9,8 @@
     </div>
 
     <main>
-        <div class="top-row px-4">
-            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        <div class="top-row px-4 d-flex justify-content-end align-items-center gap-3">
+            <TopBar />
         </div>
 
         <article class="content px-4">
@@ -21,3 +24,13 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    protected override void OnInitialized()
+    {
+    }
+
+    public void Dispose()
+    {
+    }
+}

@@ -1,0 +1,38 @@
+@inject SessionService Session
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+@using SmarterTickets.Services
+@using SmarterTickets.Core.Enums
+@implements IDisposable
+
+@if (Session.IsLoggedIn)
+{
+    <span class="text-muted small">
+        @if (Session.IsAdmin)
+        {
+            <span class="badge bg-danger me-1">Admin</span>
+        }
+        else
+        {
+            <span class="badge bg-primary me-1">User</span>
+        }
+        @Session.CurrentUser?.FirstName @Session.CurrentUser?.LastName
+    </span>
+    <a href="/profile" class="text-decoration-none small">My Profile</a>
+}
+else
+{
+    <a href="/login" class="text-decoration-none small">Login</a>
+}
+
+@code {
+    protected override void OnInitialized()
+    {
+        Session.OnChange += StateHasChanged;
+    }
+
+    public void Dispose()
+    {
+        Session.OnChange -= StateHasChanged;
+    }
+}

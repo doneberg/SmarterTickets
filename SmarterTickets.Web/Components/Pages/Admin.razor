@@ -1,0 +1,210 @@
+@page "/admin"
+@inject HttpClient Http
+@inject SessionService Session
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+@using SmarterTickets.Core.DTOs
+@using SmarterTickets.Core.Enums
+@using SmarterTickets.Services
+
+<PageTitle>Admin Dashboard</PageTitle>
+
+@if (!Session.IsAdmin)
+{
+    <p>Unauthorized.</p>
+    return;
+}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Admin Dashboard</h2>
+
+    @if (_tickets == null || _users == null)
+    {
+        <p>Loading...</p>
+    }
+    else
+    {
+        <!-- Stats Cards -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card text-white bg-primary shadow">
+                    <div class="card-body text-center">
+                        <h1>@_tickets.Count</h1>
+                        <p class="mb-0">Total Tickets</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success shadow">
+                    <div class="card-body text-center">
+                        <h1>@_tickets.Count(t => t.Status == TicketStatus.Open)</h1>
+                        <p class="mb-0">Open Tickets</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning shadow">
+                    <div class="card-body text-center">
+                        <h1>@_tickets.Count(t => t.Status == TicketStatus.InProgress)</h1>
+                        <p class="mb-0">In Progress</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-secondary shadow">
+                    <div class="card-body text-center">
+                        <h1>@_tickets.Count(t => t.Status == TicketStatus.Closed)</h1>
+                        <p class="mb-0">Closed Tickets</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-3">
+                <div class="card text-white bg-danger shadow">
+                    <div class="card-body text-center">
+                        <h1>@_tickets.Count(t => t.Priority == TicketPriority.Critical)</h1>
+                        <p class="mb-0">Critical Tickets</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-info shadow">
+                    <div class="card-body text-center">
+                        <h1>@_users.Count</h1>
+                        <p class="mb-0">Total Users</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-success shadow">
+                    <div class="card-body text-center">
+                        <h1>@_tickets.Count(t => t.Status == TicketStatus.Resolved)</h1>
+                        <p class="mb-0">Resolved</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-white bg-warning shadow">
+                    <div class="card-body text-center">
+                        <h1>@_tickets.Count(t => t.Priority == TicketPriority.High)</h1>
+                        <p class="mb-0">High Priority</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Tickets -->
+        <h4 class="mb-3">Recent Tickets</h4>
+        <div class="card shadow">
+            <div class="card-body">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Created By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var ticket in _tickets.OrderByDescending(t => t.CreatedAt).Take(5))
+                        {
+                            <tr>
+                                <td>@ticket.Id</td>
+                                <td>@ticket.Title</td>
+                                <td>
+                                    <span class="badge @GetStatusBadge(ticket.Status)">
+                                        @ticket.Status
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="badge @GetPriorityBadge(ticket.Priority)">
+                                        @ticket.Priority
+                                    </span>
+                                </td>
+                                <td>@ticket.CreatedByName</td>
+                                <td>
+                                    <a href="/tickets/@ticket.Id" class="btn btn-sm btn-primary">
+                                        View
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Users List -->
+        <h4 class="mt-5 mb-3">All Users</h4>
+        <div class="card shadow">
+            <div class="card-body">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in _users)
+                        {
+                            <tr>
+                                <td>@user.Id</td>
+                                <td>@user.FirstName @user.LastName</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    <span class="badge @(user.Role == UserRole.Admin ? "bg-danger" : "bg-primary")">
+                                        @user.Role
+                                    </span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private List<TicketDto>? _tickets;
+    private List<UserDto>? _users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (!Session.IsAdmin)
+        {
+            Nav.NavigateTo("/login");
+            return;
+        }
+
+        _tickets = await Http.GetFromJsonAsync<List<TicketDto>>("tickets");
+        _users = await Http.GetFromJsonAsync<List<UserDto>>("users");
+    }
+
+    private string GetStatusBadge(TicketStatus status) => status switch
+    {
+        TicketStatus.Open => "bg-primary",
+        TicketStatus.InProgress => "bg-warning",
+        TicketStatus.Pending => "bg-info",
+        TicketStatus.Resolved => "bg-success",
+        TicketStatus.Closed => "bg-secondary",
+        _ => "bg-secondary"
+    };
+
+    private string GetPriorityBadge(TicketPriority priority) => priority switch
+    {
+        TicketPriority.Low => "bg-success",
+        TicketPriority.Medium => "bg-info",
+        TicketPriority.High => "bg-warning",
+        TicketPriority.Critical => "bg-danger",
+        _ => "bg-secondary"
+    };
+}
