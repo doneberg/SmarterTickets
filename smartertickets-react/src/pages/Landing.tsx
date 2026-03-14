@@ -44,14 +44,14 @@ const projects: Project[] = [
     description: "Full stack ticket management system with a REST API, Blazor admin dashboard, role-based authentication, and React customer portal. Built on .NET 10.",
     tech: ["C#", ".NET 10", "Blazor", "React", "Entity Framework", "SQLite"],
     link: "/tickets/login",
-    github: "https://github.com"
+    github: "https://github.com/doneberg/SmarterTickets"
   },
   {
     id: 2,
     title: "PromptLab",
     description: "Backend-first AI workflow engine that executes multi-step prompt chains against LLM providers, with full execution tracking, JWT authentication, and a modular Vanilla JS dashboard.",
     tech: ["Python", "FastAPI", "SQLAlchemy", "JWT", "Vanilla JS"],
-    github: "https://github.com"
+    github: "https://github.com/doneberg/promptlab"
   },
   {
     id: 3,
