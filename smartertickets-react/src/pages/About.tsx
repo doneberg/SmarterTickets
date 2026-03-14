@@ -9,19 +9,20 @@ export default function About() {
           <p className="text-gray-300 leading-relaxed text-lg mb-6">
             I'm a software developer based in Mesa, Arizona with hands-on experience
             in C# and ASP.NET MVC web applications, systems support, and structured
-            software quality workflows. I'm local to Phoenix and available full-time on-site.
+            software quality workflows. I am local to Phoenix and available full-time on site.
           </p>
           <p className="text-gray-300 leading-relaxed text-lg mb-6">
             My background includes building and maintaining MVC-based applications,
-            REST service principles, Windows and Linux environments, and disciplined
-            debugging practices. I'm comfortable supporting the full development
-            lifecycle — implementation, testing, troubleshooting, and iterative improvement.
+            applying REST service principles, working in Windows and Linux environments,
+            and following disciplined debugging practices. I am comfortable supporting
+            the full development lifecycle, including implementation, testing,
+            troubleshooting, and iterative improvement.
           </p>
           <p className="text-gray-300 leading-relaxed text-lg">
-            I bring an analytical mindset to every problem — debugging feels natural
-            to me, and I enjoy the architecture decisions that make software
-            maintainable and scalable. I hold a B.A. Summa Cum Laude and am
-            finishing a B.S. in Software Engineering at ASU with 8 credits remaining.
+            I bring an analytical mindset to every problem. Debugging feels natural
+            to me, and I enjoy making architectural decisions that keep software
+            maintainable and scalable. I hold a B.A., Summa Cum Laude, and I am
+            finishing a B.S. in Software Engineering at ASU with eight credits remaining.
           </p>
         </div>
 
