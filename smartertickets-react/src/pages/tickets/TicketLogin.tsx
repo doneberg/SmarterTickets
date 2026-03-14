@@ -8,7 +8,7 @@ export default function TicketLogin() {
         <p className="text-gray-400 text-center mb-8">
           Sign in to continue
         </p>
-        <a href="http://localhost:5000/login"
+        <a href="https://smartertickets.onrender.com/"
            className="block w-full bg-blue-600 hover:bg-blue-500 text-white 
                       text-center px-6 py-3 rounded-lg font-medium 
                       transition-colors mb-3">
