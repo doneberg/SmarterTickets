@@ -24,25 +24,32 @@
                         <div class="alert alert-danger">@_errorMessage</div>
                     }
 
+                    @if (_isLoading)
+                    {
+                        <div class="alert alert-info">
+                            ⏳ Server is waking up, please wait...
+                        </div>
+                    }
+
                     <div class="mb-3">
                         <label class="form-label">Email</label>
-                        <input type="email" class="form-control" @bind="_email" />
+                        <input type="email" class="form-control" @bind="_email" disabled="@_isLoading" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
-                        <input type="password" class="form-control" @bind="_password" />
+                        <input type="password" class="form-control" @bind="_password" disabled="@_isLoading" />
                     </div>
-                    <button class="btn btn-primary w-100 mb-3" @onclick="HandleLogin">
-                        Login
+                    <button class="btn btn-primary w-100 mb-3" @onclick="HandleLogin" disabled="@_isLoading">
+                        @if (_isLoading) { <span>Loading...</span> } else { <span>Login</span> }
                     </button>
 
                     <hr />
                     <p class="text-center text-muted">Demo Access</p>
                     <div class="d-grid gap-2">
-                        <button class="btn btn-outline-primary" @onclick="LoginAsUser">
+                        <button class="btn btn-outline-primary" @onclick="LoginAsUser" disabled="@_isLoading">
                             👤 Continue as Demo User
                         </button>
-                        <button class="btn btn-outline-danger" @onclick="LoginAsAdmin">
+                        <button class="btn btn-outline-danger" @onclick="LoginAsAdmin" disabled="@_isLoading">
                             🔑 Continue as Demo Admin
                         </button>
                     </div>
@@ -56,53 +63,89 @@
     private string _email = string.Empty;
     private string _password = string.Empty;
     private string _errorMessage = string.Empty;
+    private bool _isLoading = false;
 
     private async Task HandleLogin()
     {
-        // real auth to be implemented later
-        // For now just check if user exists by email
-        var users = await Http.GetFromJsonAsync<List<UserDto>>("users");
-        var user = users?.FirstOrDefault(u => u.Email == _email);
-
-        if (user == null)
+        _isLoading = true;
+        _errorMessage = string.Empty;
+        try
         {
-            _errorMessage = "Invalid email or password.";
-            return;
-        }
+            var users = await Http.GetFromJsonAsync<List<UserDto>>("users");
+            var user = users?.FirstOrDefault(u => u.Email == _email);
 
-        Session.Login(user);
-        Nav.NavigateTo("/tickets");
+            if (user == null)
+            {
+                _errorMessage = "Invalid email or password.";
+                return;
+            }
+
+            Session.Login(user);
+            Nav.NavigateTo("/tickets");
+        }
+        catch (HttpRequestException)
+        {
+            _errorMessage = "Server is waking up, please try again in 30 seconds!";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     private async Task LoginAsUser()
     {
-        // Logs in as the first non-admin user in the database
-        var users = await Http.GetFromJsonAsync<List<UserDto>>("users");
-        var user = users?.FirstOrDefault(u => u.Role == UserRole.User);
-
-        if (user == null)
+        _isLoading = true;
+        _errorMessage = string.Empty;
+        try
         {
-            _errorMessage = "No demo user found. Please seed the database first.";
-            return;
-        }
+            var users = await Http.GetFromJsonAsync<List<UserDto>>("users");
+            var user = users?.FirstOrDefault(u => u.Role == UserRole.User);
 
-        Session.Login(user);
-        Nav.NavigateTo("/tickets");
+            if (user == null)
+            {
+                _errorMessage = "No demo user found. Please seed the database first.";
+                return;
+            }
+
+            Session.Login(user);
+            Nav.NavigateTo("/tickets");
+        }
+        catch (HttpRequestException)
+        {
+            _errorMessage = "Server is waking up, please try again in 30 seconds!";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 
     private async Task LoginAsAdmin()
     {
-        // Logs in as the first admin user in the database
-        var users = await Http.GetFromJsonAsync<List<UserDto>>("users");
-        var user = users?.FirstOrDefault(u => u.Role == UserRole.Admin);
-
-        if (user == null)
+        _isLoading = true;
+        _errorMessage = string.Empty;
+        try
         {
-            _errorMessage = "No demo admin found. Please seed the database first.";
-            return;
-        }
+            var users = await Http.GetFromJsonAsync<List<UserDto>>("users");
+            var user = users?.FirstOrDefault(u => u.Role == UserRole.Admin);
 
-        Session.Login(user);
-        Nav.NavigateTo("/tickets");
+            if (user == null)
+            {
+                _errorMessage = "No demo admin found. Please seed the database first.";
+                return;
+            }
+
+            Session.Login(user);
+            Nav.NavigateTo("/tickets");
+        }
+        catch (HttpRequestException)
+        {
+            _errorMessage = "Server is waking up, please try again in 30 seconds!";
+        }
+        finally
+        {
+            _isLoading = false;
+        }
     }
 }
