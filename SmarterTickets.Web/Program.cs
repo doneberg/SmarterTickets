@@ -6,10 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
-// HttpClient stays Scoped — correct for Blazor
+// HttpClient reads URL from config instead of hardcoded
 builder.Services.AddScoped(sp => new HttpClient 
 { 
-    BaseAddress = new Uri("http://localhost:5232/api/") 
+    BaseAddress = new Uri(builder.Configuration["ApiBaseUrl"]!) 
 });
 
 // Changed to Singleton so session persists across page navigation
